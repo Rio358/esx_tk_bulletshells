@@ -38,7 +38,6 @@ local weapons = {
     { hash = GetHashKey('WEAPON_SAWNOFFSHOTGUN'), name = 'WEAPON_SAWNOFFSHOTGUN' },
     { hash = GetHashKey('WEAPON_ASSAULTSHOTGUN'), name = 'WEAPON_ASSAULTSHOTGUN' },
     { hash = GetHashKey('WEAPON_BULLPUPSHOTGUN'), name = 'WEAPON_BULLPUPSHOTGUN' },
-    { hash = GetHashKey('WEAPON_STUNGUN'),  name = 'WEAPON_STUNGUN' },
     { hash = GetHashKey('WEAPON_SNIPERRIFLE'),  name = 'WEAPON_SNIPERRIFLE' },
     { hash = GetHashKey('WEAPON_HEAVYSNIPER'),  name = 'WEAPON_HEAVYSNIPER' },
     { hash = GetHashKey('WEAPON_HEAVYSNIPER_MK2'),  name = 'WEAPON_HEAVYSNIPER_MK2' },
@@ -97,25 +96,23 @@ Citizen.CreateThread(function()
             local playerPed = GetPlayerPed(-1)
             if IsPedShooting(playerPed) then
                 local weaponHash = GetSelectedPedWeapon(playerPed)
-                if weaponHash ~= GetHashKey('WEAPON_STUNGUN') and weaponHash ~= GetHashKey('WEAPON_FIREEXTINGUISHER') then
-                    local weaponName
-                    for k,v in pairs(weapons) do
-                        if weaponHash == v.hash then
-                            weaponName = v.name
-                            break
-                        end
+                local weaponName
+                for k,v in pairs(weapons) do
+                    if weaponHash == v.hash then
+                        weaponName = v.name
+                        break
                     end
-                    if weaponName ~= nil then
-                        local playerCoords = GetEntityCoords(playerPed)
-                        if Config.DuplicateDistance == 0 then
-                            TriggerServerEvent("esx_bulletshells:saveShell", playerCoords, weaponName)
-                        else
-                            ESX.TriggerServerCallback("esx_bulletshells:getShells", function(cbShells)
-                                if has_value(cbShells, playerCoords, weaponName) == false then
-                                    TriggerServerEvent("esx_bulletshells:saveShell", playerCoords, weaponName)
-                                end
-                            end)
-                        end
+                end
+                if weaponName ~= nil then
+                    local playerCoords = GetEntityCoords(playerPed)
+                    if Config.DuplicateDistance == 0 then
+                        TriggerServerEvent("esx_bulletshells:saveShell", playerCoords, weaponName)
+                    else
+                        ESX.TriggerServerCallback("esx_bulletshells:getShells", function(cbShells)
+                            if has_value(cbShells, playerCoords, weaponName) == false then
+                                TriggerServerEvent("esx_bulletshells:saveShell", playerCoords, weaponName)
+                            end
+                        end)
                     end
                 end
             end
