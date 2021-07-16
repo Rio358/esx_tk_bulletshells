@@ -121,9 +121,7 @@ Citizen.CreateThread(function()
 end)
 
 function has_value (shells2, coords, weapon)
-    if next(shells2) == nil then
-        return false
-    else
+    if next(shells2) ~= nil then
         for k,v in pairs(shells2) do
             if v.weapon == weapon then
                 local dist = Vdist(coords, v.coords[1], v.coords[2], v.coords[3])
@@ -136,6 +134,37 @@ function has_value (shells2, coords, weapon)
 
     return false
 end
+
+Citizen.CreateThread(function()
+    if isPolice then
+        while true do
+            Citizen.Wait(500)
+            if next(shells) ~= nil then
+                local playerPed = GetPlayerPed(-1)
+                local playerCoords = GetEntityCoords(playerPed)
+                for k,v in pairs(shells) do
+                    local dist = Vdist(playerCoords, v.coords.x, v.coords.y, v.coords.z)
+                    if closestShell ~= k then
+                        if closestShell == nil then
+                            closestShell = k
+                        end
+                        local distToOld = Vdist(playerCoords, shells[closestShell].coords.x, shells[closestShell].coords.y, shells[closestShell].coords.z)
+                        if distToOld > dist then
+                            closestShell = k
+                        end
+                    end
+                    if dist <= Config.SeeDistance then
+                        if drawShells[k] == nil then
+                            drawShells[k] = shells[k]
+                        end
+                    else
+                        drawShells[k] = nil
+                    end
+                end
+            end
+        end
+    end
+end)
 
 Citizen.CreateThread(function()
     if isPolice then
@@ -216,37 +245,6 @@ Citizen.CreateThread(function()
             isArmed = true
         else
             isArmed = false
-        end
-    end
-end)
-
-Citizen.CreateThread(function()
-    if isPolice then
-        while true do
-            Citizen.Wait(500)
-            if next(shells) ~= nil then
-                local playerPed = GetPlayerPed(-1)
-                local playerCoords = GetEntityCoords(playerPed)
-                for k,v in pairs(shells) do
-                    local dist = Vdist(playerCoords, v.coords.x, v.coords.y, v.coords.z)
-                    if closestShell ~= k then
-                        if closestShell == nil then
-                            closestShell = k
-                        end
-                        local distToOld = Vdist(playerCoords, shells[closestShell].coords.x, shells[closestShell].coords.y, shells[closestShell].coords.z)
-                        if distToOld > dist then
-                            closestShell = k
-                        end
-                    end
-                    if dist <= Config.SeeDistance then
-                        if drawShells[k] == nil then
-                            drawShells[k] = shells[k]
-                        end
-                    else
-                        drawShells[k] = nil
-                    end
-                end
-            end
         end
     end
 end)
