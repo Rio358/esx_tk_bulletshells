@@ -105,15 +105,17 @@ Citizen.CreateThread(function()
                             break
                         end
                     end
-                    local playerCoords = GetEntityCoords(playerPed)
-                    if Config.DuplicateDistance == 0 then
-                        TriggerServerEvent("esx_bulletshells:saveShell", playerCoords, weaponName)
-                    else
-                        ESX.TriggerServerCallback("esx_bulletshells:getShells", function(cbShells)
-                            if has_value(cbShells, playerCoords, weaponName) == false then
-                                TriggerServerEvent("esx_bulletshells:saveShell", playerCoords, weaponName)
-                            end
-                        end)
+                    if weaponName ~= nil then
+                        local playerCoords = GetEntityCoords(playerPed)
+                        if Config.DuplicateDistance == 0 then
+                            TriggerServerEvent("esx_bulletshells:saveShell", playerCoords, weaponName)
+                        else
+                            ESX.TriggerServerCallback("esx_bulletshells:getShells", function(cbShells)
+                                if has_value(cbShells, playerCoords, weaponName) == false then
+                                    TriggerServerEvent("esx_bulletshells:saveShell", playerCoords, weaponName)
+                                end
+                            end)
+                        end
                     end
                 end
             end
