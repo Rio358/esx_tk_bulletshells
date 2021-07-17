@@ -81,10 +81,10 @@ local isPolice, isFlashlight, isAiming, isArmed = false
 local closestShell
 
 Citizen.CreateThread(function()
-    while ESX == nil do
+    while ESX.PlayerData.job == nil do
         Citizen.Wait(10)
     end
-    if ESX.PlayerData.job ~= nil and ESX.PlayerData.job.name == Config.DBPoliceName then
+    if ESX.PlayerData.job.name == Config.DBPoliceName then
         isPolice = true
     end
 end)
@@ -106,11 +106,11 @@ Citizen.CreateThread(function()
                 if weaponName ~= nil then
                     local playerCoords = GetEntityCoords(playerPed)
                     if Config.DuplicateDistance == 0 then
-                        TriggerServerEvent("esx_bulletshells:saveShell", playerCoords, weaponName)
+                        TriggerServerEvent("esx_tk_bulletshells:saveShell", playerCoords, weaponName)
                     else
-                        ESX.TriggerServerCallback("esx_bulletshells:getShells", function(cbShells)
+                        ESX.TriggerServerCallback("esx_tk_bulletshells:getShells", function(cbShells)
                             if has_value(cbShells, playerCoords, weaponName) == false then
-                                TriggerServerEvent("esx_bulletshells:saveShell", playerCoords, weaponName)
+                                TriggerServerEvent("esx_tk_bulletshells:saveShell", playerCoords, weaponName)
                             end
                         end)
                     end
@@ -120,9 +120,9 @@ Citizen.CreateThread(function()
     end
 end)
 
-function has_value (shells2, coords, weapon)
-    if next(shells2) ~= nil then
-        for k,v in pairs(shells2) do
+function has_value (array, coords, weapon)
+    if next(array) ~= nil then
+        for k,v in pairs(array) do
             if v.weapon == weapon then
                 local dist = Vdist(coords, v.coords[1], v.coords[2], v.coords[3])
                 if dist <= Config.DuplicateDistance then
@@ -131,14 +131,13 @@ function has_value (shells2, coords, weapon)
             end
         end
     end
-
     return false
 end
 
 Citizen.CreateThread(function()
-    if isPolice then
-        while true do
-            Citizen.Wait(500)
+    while true do
+        Citizen.Wait(500)
+        if isPolice then
             if next(shells) ~= nil then
                 local playerPed = GetPlayerPed(-1)
                 local playerCoords = GetEntityCoords(playerPed)
@@ -167,9 +166,9 @@ Citizen.CreateThread(function()
 end)
 
 Citizen.CreateThread(function()
-    if isPolice then
-        while true do
-            Citizen.Wait(0)
+    while true do
+        Citizen.Wait(0)
+        if isPolice then
             if isFlashlight and isAiming then
                 shouldUpdate = true
                 if next(drawShells) ~= nil then
@@ -187,7 +186,7 @@ Citizen.CreateThread(function()
                             local weaponLabel = ESX.GetWeaponLabel(shells[closestShell].weapon)
                             --ESX.ShowNotification(_U('shell_from', weaponLabel))
                             exports['mythic_notify']:DoCustomHudText('inform', _U('shell_from', weaponLabel), 20000)
-                            TriggerServerEvent("esx_bulletshells:removeShell", closestShell)
+                            TriggerServerEvent("esx_tk_bulletshells:removeShell", closestShell)
                             shells[closestShell] = nil
                             drawShells[closestShell] = nil
                             closestShell = nil
@@ -204,9 +203,9 @@ Citizen.CreateThread(function()
 end)
 
 Citizen.CreateThread(function()
-    if isPolice then
-        while true do
-            Citizen.Wait(0)
+    while true do
+        Citizen.Wait(0)
+        if isPolice then
             if isFlashlight and isAiming then
                 if next(drawShells) ~= nil and closestShell ~= nil then
                     local playerCoords = GetEntityCoords(GetPlayerPed(-1))
@@ -223,12 +222,12 @@ Citizen.CreateThread(function()
 end)
 
 Citizen.CreateThread(function()
-    if isPolice then
-        while true do
-            Citizen.Wait(500)
+    while true do
+        Citizen.Wait(500)
+        if isPolice then
             if shouldUpdate then
                 shouldUpdate = false
-                ESX.TriggerServerCallback("esx_bulletshells:getShells", function(cbShells)
+                ESX.TriggerServerCallback("esx_tk_bulletshells:getShells", function(cbShells)
                     shells = cbShells
                 end)
             end
@@ -250,9 +249,9 @@ Citizen.CreateThread(function()
 end)
 
 Citizen.CreateThread(function()
-    if isPolice then
-        while true do
-            Citizen.Wait(200)
+    while true do
+        Citizen.Wait(200)
+        if isPolice then
             local playerPed = GetPlayerPed(-1)
             if GetSelectedPedWeapon(playerPed) == GetHashKey(Config.WeaponToSearch) then
                 isFlashlight = true
@@ -290,4 +289,13 @@ function Draw3DText(x, y, z, text)
     DrawRect(0.0, 0.0+0.0125, 0.017+ factor, 0.03, 0, 0, 0, 75)
     ClearDrawOrigin()
 end
+
+RegisterNetEvent('esx_tk_bulletshells:removeDrawShell')
+AddEventHandler('esx_tk_bulletshells:removeDrawShell', function(id)
+    if isPolice then
+        if drawShells[id] ~= nil then
+            drawShells[id] = nil
+        end
+    end
+end)
 
