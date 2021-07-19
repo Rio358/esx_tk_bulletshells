@@ -12,6 +12,7 @@ Config.SearchTime = 1000
 Config.DisappearTime = 1800
 
 Config.SeeDistance = 5
+Config.InspectDistance = 2
 Config.DuplicateDistance = 1.5
 
 Config.EnableDuplicate = true

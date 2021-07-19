@@ -41,10 +41,6 @@ local weapons = {
     { hash = GetHashKey('WEAPON_SNIPERRIFLE'),  name = 'WEAPON_SNIPERRIFLE' },
     { hash = GetHashKey('WEAPON_HEAVYSNIPER'),  name = 'WEAPON_HEAVYSNIPER' },
     { hash = GetHashKey('WEAPON_HEAVYSNIPER_MK2'),  name = 'WEAPON_HEAVYSNIPER_MK2' },
-    { hash = GetHashKey('WEAPON_REMOTESNIPER'),  name = 'WEAPON_REMOTESNIPER' },
-    { hash = GetHashKey('WEAPON_GRENADELAUNCHER'), name = 'WEAPON_GRENADELAUNCHER' },
-    { hash = GetHashKey('WEAPON_RPG'), name = 'WEAPON_RPG' },
-    { hash = GetHashKey('WEAPON_STINGER'), name = 'WEAPON_STINGER' },
     { hash = GetHashKey('WEAPON_MINIGUN'), name = 'WEAPON_MINIGUN' },
     { hash = GetHashKey('WEAPON_SNSPISTOL'), name = 'WEAPON_SNSPISTOL' },
     { hash = GetHashKey('WEAPON_GUSENBERG'), name = 'WEAPON_GUSENBERG' },
@@ -54,22 +50,17 @@ local weapons = {
     { hash = GetHashKey('WEAPON_BULLPUPRIFLE'), name = 'WEAPON_BULLPUPRIFLE' },
     { hash = GetHashKey('WEAPON_BULLPUPRIFLE_MK2'), name = 'WEAPON_BULLPUPRIFLE_MK2' },
     { hash = GetHashKey('WEAPON_VINTAGEPISTOL'),  name = 'WEAPON_VINTAGEPISTOL' },
-    { hash = GetHashKey('WEAPON_FIREWORK'), name = 'WEAPON_FIREWORK' },
     { hash = GetHashKey('WEAPON_MUSKET'), name = 'WEAPON_MUSKET' },
     { hash = GetHashKey('WEAPON_HEAVYSHOTGUN'),  name = 'WEAPON_HEAVYSHOTGUN' },
     { hash = GetHashKey('WEAPON_MARKSMANRIFLE'), name = 'WEAPON_MARKSMANRIFLE' },
     { hash = GetHashKey('WEAPON_MARKSMANRIFLE_MK2'), name = 'WEAPON_MARKSMANRIFLE_MK2' },
-    { hash = GetHashKey('WEAPON_HOMINGLAUNCHER'), name = 'WEAPON_HOMINGLAUNCHER' },
-    { hash = GetHashKey('WEAPON_FLAREGUN'), name = 'WEAPON_FLAREGUN' },
     { hash = GetHashKey('WEAPON_COMBATPDW'),  name = 'WEAPON_COMBATPDW' },
     { hash = GetHashKey('WEAPON_MARKSMANPISTOL'), name = 'WEAPON_MARKSMANPISTOL' },
-    { hash = GetHashKey('WEAPON_RAILGUN'), name = 'WEAPON_RAILGUN' },
     { hash = GetHashKey('WEAPON_MACHINEPISTOL'), name = 'WEAPON_MACHINEPISTOL' },
     { hash = GetHashKey('WEAPON_REVOLVER'), name = 'WEAPON_REVOLVER' },
     { hash = GetHashKey('WEAPON_DBSHOTGUN'), name = 'WEAPON_DBSHOTGUN' },
     { hash = GetHashKey('WEAPON_COMPACTRIFLE'), name = 'WEAPON_COMPACTRIFLE' },
     { hash = GetHashKey('WEAPON_AUTOSHOTGUN'),  name = 'WEAPON_AUTOSHOTGUN' },
-    { hash = GetHashKey('WEAPON_COMPACTLAUNCHER'),  name = 'WEAPON_COMPACTLAUNCHER' },
     { hash = GetHashKey('WEAPON_MINISMG'), name = 'WEAPON_MINISMG' }
 }
 
@@ -79,6 +70,7 @@ local time = 0
 local shouldUpdate = true
 local isPolice, isFlashlight, isAiming, isArmed = false
 local closestShell
+local closestInspectShell
 
 Citizen.CreateThread(function()
     while ESX.PlayerData.job == nil do
@@ -104,13 +96,14 @@ Citizen.CreateThread(function()
                     end
                 end
                 if weaponName ~= nil then
+                    local weaponType = WeaponType(weaponName)
                     local playerCoords = GetEntityCoords(playerPed)
                     if Config.DuplicateDistance == 0 then
-                        TriggerServerEvent("esx_tk_bulletshells:saveShell", playerCoords, weaponName)
+                        TriggerServerEvent("esx_tk_bulletshells:saveShell", playerCoords, weaponName, weaponType)
                     else
                         ESX.TriggerServerCallback("esx_tk_bulletshells:getShells", function(cbShells)
                             if has_value(cbShells, playerCoords, weaponName) == false then
-                                TriggerServerEvent("esx_tk_bulletshells:saveShell", playerCoords, weaponName)
+                                TriggerServerEvent("esx_tk_bulletshells:saveShell", playerCoords, weaponName, weaponType)
                             end
                         end)
                     end
@@ -119,6 +112,45 @@ Citizen.CreateThread(function()
         end
     end
 end)
+
+function WeaponType(weaponName)
+	local pistols = {'WEAPON_VINTAGEPISTOL', 'WEAPON_SNSPISTOL', 'WEAPON_SNSPISTOL_MK2', 'WEAPON_PISTOL', 'WEAPON_PISTOL_MK2', 'WEAPON_COMBATPISTOL', 'WEAPON_APPISTOL', 'WEAPON_HEAVYPISTOL', 'WEAPON_PISTOL50', 'WEAPON_REVOLVER', 'WEAPON_REVOLVER_MK2', 'WEAPON_MARKSMANPISTOL', 'WEAPON_DOUBLEACTION'}
+	local smgs = {'WEAPON_MICROSMG', 'WEAPON_SMG', 'WEAPON_SMG_MK2', 'WEAPON_ASSAULTSMG', 'WEAPON_COMBATPDW', 'WEAPON_MACHINEPISTOL', 'WEAPON_MINISMG'}
+	local shotguns = {'WEAPON_PUMPSHOTGUN', 'WEAPON_PUMPSHOTGUN_MK2', 'WEAPON_ASSAULTSHOTGUN', 'WEAPON_BULLPUPSHOTGUN', 'WEAPON_SAWNOFFSHOTGUN', 'WEAPON_DBSHOTGUN', 'WEAPON_HEAVYSHOTGUN', 'WEAPON_MUSKET', 'WEAPON_AUTOSHOTGUN', 'WEAPON_COMBATSHOTGUN'}
+	local rifles = {'WEAPON_ASSAULTRIFLE', 'WEAPON_ASSAULTRIFLE_MK2', 'WEAPON_CARBINERIFLE', 'WEAPON_CARBINERIFLE_MK2', 'WEAPON_ADVANCEDRIFLE', 'WEAPON_SPECIALCARBINE', 'WEAPON_SPECIALCARBINE_MK2', 'WEAPON_BULLPUPRIFLE', 'WEAPON_BULLPUPRIFLE_MK2', 'WEAPON_COMPACTRIFLE', 'WEAPON_MILITARYRIFLE'}
+	local lmgs = {'WEAPON_MG', 'WEAPON_COMBATMG', 'WEAPON_COMBATMG_MK2', 'WEAPON_GUSENBERG'}
+	local snipers = {'WEAPON_SNIPERRIFLE', 'WEAPON_HEAVYSNIPER', 'WEAPON_HEAVYSNIPER_MK2', 'WEAPON_MARKSMANRIFLE', 'WEAPON_MARKSMANRIFLE_MK2'}
+    for k,v in pairs(pistols) do
+        if weaponName == v then
+            return _U('pistol')
+        end
+    end
+    for k,v in pairs(smgs) do
+        if weaponName == v then
+            return _U('smg')
+        end
+    end
+    for k,v in pairs(shotguns) do
+        if weaponName == v then
+            return _U('shotgun')
+        end
+    end
+    for k,v in pairs(rifles) do
+        if weaponName == v then
+            return _U('rifle')
+        end
+    end
+    for k,v in pairs(lmgs) do
+        if weaponName == v then
+            return _U('lmg')
+        end
+    end
+    for k,v in pairs(snipers) do
+        if weaponName == v then
+            return _U('sniper')
+        end
+    end
+end
 
 function has_value (array, coords, weapon)
     if next(array) ~= nil then
@@ -136,7 +168,7 @@ end
 
 Citizen.CreateThread(function()
     while true do
-        Citizen.Wait(500)
+        Citizen.Wait(300)
         if isPolice then
             if next(shells) ~= nil then
                 local playerPed = GetPlayerPed(-1)
@@ -152,6 +184,7 @@ Citizen.CreateThread(function()
                             closestShell = k
                         end
                     end
+                    
                     if dist <= Config.SeeDistance then
                         if drawShells[k] == nil then
                             drawShells[k] = shells[k]
@@ -173,16 +206,33 @@ Citizen.CreateThread(function()
                 shouldUpdate = true
                 if next(drawShells) ~= nil then
                     for k,v in pairs(drawShells) do
-                        Draw3DText(v.coords.x, v.coords.y, v.coords.z - 0.7, _U('examine_shell'))
-                        if IsControlJustReleased(0, 47) then
+                        if closestInspectShell ~= k then
+                            Draw3DText(v.coords.x, v.coords.y, v.coords.z - 0.7, _U('shell', v.weaponType))
+                        else
+                            Draw3DText(v.coords.x, v.coords.y, v.coords.z - 0.7, _U('shell', v.weaponType) .. _U('inspect_shell'))
+                        end
+                    end
+                end
+            end
+        end
+    end
+end)
+
+Citizen.CreateThread(function()
+    while true do
+        Citizen.Wait(0)
+        if isPolice then
+            if isFlashlight and isAiming then
+                if next(drawShells) ~= nil and closestShell ~= nil then
+                    if closestInspectShell == closestShell then
+                        if IsControlJustReleased(0, 38) then
                             local playerPed = GetPlayerPed(-1)
                             SetCurrentPedWeapon(playerPed, 0xA2719263, true)
-                            Citizen.Wait(1500)
+                            Citizen.Wait(1000)
                             TaskStartScenarioInPlace(playerPed, 'WORLD_HUMAN_GARDENER_PLANT', -1, true)
                             Citizen.Wait(Config.SearchTime)
                             ClearPedTasks(playerPed)
-                            local time = shells[closestShell].time / 60
-                            local realTime = round(time, 1)
+                            local time = round(shells[closestShell].time / 60, 1)
                             local weaponLabel = ESX.GetWeaponLabel(shells[closestShell].weapon)
                             --ESX.ShowNotification(_U('shell_from', weaponLabel))
                             exports['mythic_notify']:DoCustomHudText('inform', _U('shell_from', weaponLabel), 20000)
@@ -192,8 +242,8 @@ Citizen.CreateThread(function()
                             closestShell = nil
                             shouldUpdate = true
                             Citizen.Wait(5000)
-                            --ESX.ShowNotification(_U('was_shot', realTime))
-                            exports['mythic_notify']:DoCustomHudText('inform', _U('was_shot', realTime), 20000)
+                            --ESX.ShowNotification(_U('was_shot', time))
+                            exports['mythic_notify']:DoCustomHudText('inform', _U('was_shot', time), 20000)
                         end
                     end
                 end
@@ -209,11 +259,11 @@ Citizen.CreateThread(function()
             if isFlashlight and isAiming then
                 if next(drawShells) ~= nil and closestShell ~= nil then
                     local playerCoords = GetEntityCoords(GetPlayerPed(-1))
-                    local dist = Vdist(playerCoords, shells[closestShell].coords.x, shells[closestShell].coords.y, shells[closestShell].coords.z)
-                    if dist <= Config.SeeDistance then
-                        DrawMarker(2, drawShells[closestShell].coords.x, drawShells[closestShell].coords.y, drawShells[closestShell].coords.z - 0.5, 0.0, 0.0, 0.0, 0.0, 180.0, 0.0, 0.15, 0.15, 0.15, 39, 132, 194, 150, true, true)
+                    local distToClosest = Vdist(playerCoords, shells[closestShell].coords.x, shells[closestShell].coords.y, shells[closestShell].coords.z)
+                    if distToClosest <= Config.InspectDistance then
+                        closestInspectShell = closestShell
                     else
-                        Citizen.Wait(100)
+                        closestInspectShell = nil
                     end
                 end
             end
