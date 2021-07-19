@@ -179,9 +179,11 @@ Citizen.CreateThread(function()
                         if closestShell == nil then
                             closestShell = k
                         end
-                        local distToOld = Vdist(playerCoords, shells[closestShell].coords.x, shells[closestShell].coords.y, shells[closestShell].coords.z)
-                        if distToOld > dist then
-                            closestShell = k
+                        if shells[closestShell] ~= nil then
+                            local distToOld = Vdist(playerCoords, shells[closestShell].coords.x, shells[closestShell].coords.y, shells[closestShell].coords.z)
+                            if distToOld > dist then
+                                closestShell = k
+                            end
                         end
                     end
                     
@@ -228,7 +230,7 @@ Citizen.CreateThread(function()
                         if IsControlJustReleased(0, 38) then
                             local playerPed = GetPlayerPed(-1)
                             SetCurrentPedWeapon(playerPed, 0xA2719263, true)
-                            Citizen.Wait(1000)
+                            Citizen.Wait(800)
                             TaskStartScenarioInPlace(playerPed, 'WORLD_HUMAN_GARDENER_PLANT', -1, true)
                             Citizen.Wait(Config.SearchTime)
                             ClearPedTasks(playerPed)
@@ -258,12 +260,14 @@ Citizen.CreateThread(function()
         if isPolice then
             if isFlashlight and isAiming then
                 if next(drawShells) ~= nil and closestShell ~= nil then
-                    local playerCoords = GetEntityCoords(GetPlayerPed(-1))
-                    local distToClosest = Vdist(playerCoords, shells[closestShell].coords.x, shells[closestShell].coords.y, shells[closestShell].coords.z)
-                    if distToClosest <= Config.InspectDistance then
-                        closestInspectShell = closestShell
-                    else
-                        closestInspectShell = nil
+                    if shells[closestShell] ~= nil then
+                        local playerCoords = GetEntityCoords(GetPlayerPed(-1))
+                        local distToClosest = Vdist(playerCoords, shells[closestShell].coords.x, shells[closestShell].coords.y, shells[closestShell].coords.z)
+                        if distToClosest <= Config.InspectDistance then
+                            closestInspectShell = closestShell
+                        else
+                            closestInspectShell = nil
+                        end
                     end
                 end
             end
@@ -343,9 +347,18 @@ end
 RegisterNetEvent('esx_tk_bulletshells:removeDrawShell')
 AddEventHandler('esx_tk_bulletshells:removeDrawShell', function(id)
     if isPolice then
-        if drawShells[id] ~= nil then
-            drawShells[id] = nil
-        end
+        ESX.TriggerServerCallback("esx_tk_bulletshells:getShells", function(cbShells)
+            shells = cbShells
+            if drawShells[id] ~= nil then
+                drawShells[id] = nil
+            end
+            if id == closestShell then
+                closestShell = nil
+            end
+            if id == closestInspectShell then
+                closestInspectShell = nil
+            end
+        end)
     end
 end)
 

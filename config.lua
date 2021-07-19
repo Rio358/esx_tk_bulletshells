@@ -6,7 +6,7 @@ Config.DBPoliceName = 'police'
 Config.WeaponToSearch = 'WEAPON_FLASHLIGHT'
 
 -- Time in milliseconds
-Config.SearchTime = 1000
+Config.SearchTime = 10000
 
 -- Time in seconds
 Config.DisappearTime = 1800

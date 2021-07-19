@@ -61,7 +61,7 @@ Citizen.CreateThread(function()
             end
             v.time = v.time + 1
             if v.time >= Config.DisappearTime then
-                TriggerServerEvent('esx_tk_bulletshells:removeShell', k)
+                TriggerEvent('esx_tk_bulletshells:removeShell', k)
             end
         end
     end
