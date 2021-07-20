@@ -25,7 +25,7 @@ Is a script that leaves bullet shells to the ground when a gun is shot which pol
   - (You can easily change the notification in client/main.lua file)
 
 # Downloading & installing the script
-- Download the file and extract ```esx_tk_bulletshells``` into your resources/ folder
+- Download the file and extract ```esx_tk_bulletshells``` into your resources folder
 - Add ```start esx_tk_bulletshells``` to your ```server.cfg``` file
 - Insert the ```esx_tk_bulletshells.sql``` file into your database
 - _(Optional) Edit ```config.lua``` to your liking_
