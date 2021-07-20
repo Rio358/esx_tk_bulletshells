@@ -7,8 +7,9 @@ Is a script that leaves bullet shells to the ground when a gun is shot which pol
 - Only tested with ESX V1 Final
 
 # Features
-- Saves bullet shells when a gun is shot
-- Police can inspect bullets shells which reveals the gun and the time the gun was shot
+- Saves bullet shell at player coords when a gun is shot
+- Police can inspect bullets shells 
+- Inspecting a shell reveals the gun and the time the gun was shot
 - Shells automatically save to database
 - Police:
   - Idle > 0.03 ms 
