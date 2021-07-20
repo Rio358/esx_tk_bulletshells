@@ -14,7 +14,7 @@ Is a script that leaves bullet shells to the ground when a gun is shot which pol
 - Police:
   - Idle > 0.03 ms 
   - Aiming with flashlight with shell infront > ~0.10 ms (More shells = Bigger usage)
-- Non-police:
+- Others:
   - Idle > 0.01 ms
   - Shooting > ~0.05 ms
 
