@@ -230,7 +230,9 @@ Citizen.CreateThread(function()
                         if IsControlJustReleased(0, 38) then
                             local playerPed = GetPlayerPed(-1)
                             SetCurrentPedWeapon(playerPed, 0xA2719263, true)
-                            Citizen.Wait(800)
+                            while IsPedArmed(playerPed, 7) do
+                                Citizen.Wait(100)
+                            end
                             TaskStartScenarioInPlace(playerPed, 'WORLD_HUMAN_GARDENER_PLANT', -1, true)
                             Citizen.Wait(Config.SearchTime)
                             ClearPedTasks(playerPed)
@@ -243,7 +245,7 @@ Citizen.CreateThread(function()
                             drawShells[closestShell] = nil
                             closestShell = nil
                             shouldUpdate = true
-                            Citizen.Wait(5000)
+                            Citizen.Wait(3000)
                             --ESX.ShowNotification(_U('was_shot', time))
                             exports['mythic_notify']:DoCustomHudText('inform', _U('was_shot', time), 20000)
                         end
