@@ -21,7 +21,8 @@ Is a script that leaves bullet shells to the ground when a gun is shot which pol
 # Requirements
 - [es_extended](https://github.com/esx-framework/esx-legacy/tree/main/%5Besx%5D/es_extended)
 - [mysql-async](https://github.com/brouznouf/fivem-mysql-async)
-- [mythic_notify](https://github.com/JayMontana36/mythic_notify) (You can easily change the notification in client/main.lua file)
+- [mythic_notify](https://github.com/JayMontana36/mythic_notify) 
+  - (You can easily change the notification in client/main.lua file)
 
 # Downloading & installing the script
 - Download the file and extract ```esx_tk_bulletshells``` into your resources/ folder
