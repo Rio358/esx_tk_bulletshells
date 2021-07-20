@@ -122,32 +122,32 @@ function WeaponType(weaponName)
 	local snipers = {'WEAPON_SNIPERRIFLE', 'WEAPON_HEAVYSNIPER', 'WEAPON_HEAVYSNIPER_MK2', 'WEAPON_MARKSMANRIFLE', 'WEAPON_MARKSMANRIFLE_MK2'}
     for k,v in pairs(pistols) do
         if weaponName == v then
-            return _U('pistol')
+            return 'pistol'
         end
     end
     for k,v in pairs(smgs) do
         if weaponName == v then
-            return _U('smg')
+            return 'smg'
         end
     end
     for k,v in pairs(shotguns) do
         if weaponName == v then
-            return _U('shotgun')
+            return 'shotgun'
         end
     end
     for k,v in pairs(rifles) do
         if weaponName == v then
-            return _U('rifle')
+            return 'rifle'
         end
     end
     for k,v in pairs(lmgs) do
         if weaponName == v then
-            return _U('lmg')
+            return 'lmg'
         end
     end
     for k,v in pairs(snipers) do
         if weaponName == v then
-            return _U('sniper')
+            return 'sniper'
         end
     end
 end
@@ -209,9 +209,9 @@ Citizen.CreateThread(function()
                 if next(drawShells) ~= nil then
                     for k,v in pairs(drawShells) do
                         if closestInspectShell ~= k then
-                            Draw3DText(v.coords.x, v.coords.y, v.coords.z - 0.7, _U('shell', v.weaponType))
+                            Draw3DText(v.coords.x, v.coords.y, v.coords.z - 0.7, _U('shell', _U(v.weaponType)))
                         else
-                            Draw3DText(v.coords.x, v.coords.y, v.coords.z - 0.7, _U('shell', v.weaponType) .. _U('inspect_shell'))
+                            Draw3DText(v.coords.x, v.coords.y, v.coords.z - 0.7, _U('shell', _U(v.weaponType)) .. _U('inspect_shell'))
                         end
                     end
                 end

@@ -20,20 +20,18 @@ Citizen.CreateThread(function()
 end)
 
 function UpdateDatabase()
-    if next(shells) ~= nil then
-        for k,v in pairs(shells) do
-            MySQL.Async.execute("DELETE FROM bulletshells",{}, function(rowsChanged)
+    MySQL.Async.execute("DELETE FROM bulletshells",{}, function(rowsChanged)
+        if next(shells) ~= nil then
+            for k,v in pairs(shells) do
                 MySQL.Async.execute('INSERT INTO bulletshells (coords, weapon, weaponType, time) VALUES (@coords, @weapon, @weaponType, @time)', {
                     ['@coords']   = json.encode({x = v.coords.x, y = v.coords.y, z = v.coords.z}),
                     ['@weapon']   = v.weapon,
                     ['@weaponType']   = v.weaponType,
                     ['@time']    = v.time
                 })
-            end)
+            end
         end
-    else
-        MySQL.Async.execute("DELETE FROM bulletshells",{}, function(rowsChanged) end)
-    end
+    end)
     SetTimeout(60000, UpdateDatabase)
 end
 

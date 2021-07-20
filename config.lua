@@ -13,6 +13,6 @@ Config.DisappearTime = 1000*60*60
 
 Config.SeeDistance = 5
 Config.InspectDistance = 2
-Config.DuplicateDistance = 1.5
+Config.DuplicateDistance = 1
 
 
