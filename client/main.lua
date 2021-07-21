@@ -66,11 +66,9 @@ local weapons = {
 
 local shells = {}
 local drawShells = {}
-local time = 0
-local shouldUpdate = true
+local closestShell, closestInspectShell
 local isFlashlight, isAiming, isArmed = false
-local closestShell
-local closestInspectShell
+local shouldUpdate = true
 
 Citizen.CreateThread(function()
     while true do
@@ -158,6 +156,9 @@ function has_value (array, coords, weapon)
 end
 
 Citizen.CreateThread(function()
+    while ESX == nil do
+        Citizen.Wait(10)
+    end
     while true do
         if ESX.PlayerData.job.name == Config.DBPoliceName then
             Citizen.Wait(300)
@@ -194,6 +195,9 @@ Citizen.CreateThread(function()
 end)
 
 Citizen.CreateThread(function()
+    while ESX == nil do
+        Citizen.Wait(10)
+    end
     while true do
         if ESX.PlayerData.job.name == Config.DBPoliceName then
             Citizen.Wait(0)
@@ -216,6 +220,9 @@ Citizen.CreateThread(function()
 end)
 
 Citizen.CreateThread(function()
+    while ESX == nil do
+        Citizen.Wait(10)
+    end
     while true do
         if ESX.PlayerData.job.name == Config.DBPoliceName then
             Citizen.Wait(0)
@@ -254,6 +261,9 @@ Citizen.CreateThread(function()
 end)
 
 Citizen.CreateThread(function()
+    while ESX == nil do
+        Citizen.Wait(10)
+    end
     while true do
         if ESX.PlayerData.job.name == Config.DBPoliceName then
             Citizen.Wait(0)
@@ -277,6 +287,9 @@ Citizen.CreateThread(function()
 end)
 
 Citizen.CreateThread(function()
+    while ESX == nil do
+        Citizen.Wait(10)
+    end
     while true do
         if ESX.PlayerData.job.name == Config.DBPoliceName then
             Citizen.Wait(500)
@@ -306,6 +319,9 @@ Citizen.CreateThread(function()
 end)
 
 Citizen.CreateThread(function()
+    while ESX == nil do
+        Citizen.Wait(10)
+    end
     while true do
         if ESX.PlayerData.job.name == Config.DBPoliceName then
             Citizen.Wait(200)
