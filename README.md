@@ -2,10 +2,6 @@
 Is a script that leaves bullet shells to the ground when a gun is shot which police can inspect. Great way to allow police to investigate crime scenes. 
 - **[Video](https://www.youtube.com/watch?v=Y84ymYKUVEE)**
 
-# Useful information
-- Not tested with multiple players
-- Only tested with ESX V1 Final
-
 # Features
 - Saves bullet shell at player coords when a gun is shot
 - Police can inspect bullets shells while aiming with a flashlight
