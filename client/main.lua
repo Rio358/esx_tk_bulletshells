@@ -156,7 +156,7 @@ function has_value (array, coords, weapon)
 end
 
 Citizen.CreateThread(function()
-    while ESX.PlayerData.job.name == nil do
+    while ESX.PlayerData.job == nil do
         Citizen.Wait(10)
     end
     while true do
@@ -195,7 +195,7 @@ Citizen.CreateThread(function()
 end)
 
 Citizen.CreateThread(function()
-    while ESX.PlayerData.job.name == nil do
+    while ESX.PlayerData.job == nil do
         Citizen.Wait(10)
     end
     while true do
@@ -220,7 +220,7 @@ Citizen.CreateThread(function()
 end)
 
 Citizen.CreateThread(function()
-    while ESX.PlayerData.job.name == nil do
+    while ESX.PlayerData.job == nil do
         Citizen.Wait(10)
     end
     while true do
@@ -261,7 +261,7 @@ Citizen.CreateThread(function()
 end)
 
 Citizen.CreateThread(function()
-    while ESX.PlayerData.job.name == nil do
+    while ESX.PlayerData.job == nil do
         Citizen.Wait(10)
     end
     while true do
@@ -287,7 +287,7 @@ Citizen.CreateThread(function()
 end)
 
 Citizen.CreateThread(function()
-    while ESX.PlayerData.job.name == nil do
+    while ESX.PlayerData.job == nil do
         Citizen.Wait(10)
     end
     while true do
@@ -319,7 +319,7 @@ Citizen.CreateThread(function()
 end)
 
 Citizen.CreateThread(function()
-    while ESX.PlayerData.job.name == nil do
+    while ESX.PlayerData.job == nil do
         Citizen.Wait(10)
     end
     while true do
