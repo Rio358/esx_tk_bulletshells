@@ -44,6 +44,16 @@ AddEventHandler('esx_tk_bulletshells:saveShell', function(coords, weapon, weapon
     table.insert(shells, {coords = coords, weapon = weapon, weaponType = weaponType, time = 0})
 end)
 
+if Config.ox_inventory then
+    RegisterServerEvent('esx_tk_bulletshells:GiveEvidence')
+    AddEventHandler('esx_tk_bulletshells:GiveEvidence', function(data)
+        local src = source
+        local xPlayer = ESX.GetPlayerFromId(src)
+        local metadata = data
+        xPlayer.addInventoryItem('shellcasing',1,metadata)
+    end)
+end
+
 RegisterServerEvent('esx_tk_bulletshells:removeShell')
 AddEventHandler('esx_tk_bulletshells:removeShell', function(id)
     shells[id] = nil

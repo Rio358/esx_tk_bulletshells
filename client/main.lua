@@ -5,7 +5,14 @@ TriggerEvent('esx:getSharedObject', function(obj) ESX = obj end)
 
 RegisterNetEvent('esx:playerLoaded')
 AddEventHandler('esx:playerLoaded', function(xPlayer)
-    ESX.PlayerData = xPlayer   
+    ESX.PlayerData = xPlayer
+    ESX.PlayerLoaded = true
+end)
+
+RegisterNetEvent('esx:onplayerLogout')
+AddEventHandler('esx:onplayerLogout', function(xPlayer)
+    ESX.PlayerLoaded = false
+    ESX.PlayerData = {}
 end)
 
 RegisterNetEvent('esx:setJob')
@@ -74,7 +81,7 @@ Citizen.CreateThread(function()
     while true do
         Citizen.Wait(0)
         if isArmed then
-            local playerPed = GetPlayerPed(-1)
+            local playerPed = PlayerPedId()
             if IsPedShooting(playerPed) then
                 local weaponHash = GetSelectedPedWeapon(playerPed)
                 local weaponName
@@ -163,7 +170,7 @@ Citizen.CreateThread(function()
         if ESX.PlayerData.job.name == Config.DBPoliceName then
             Citizen.Wait(300)
             if next(shells) ~= nil then
-                local playerPed = GetPlayerPed(-1)
+                local playerPed = PlayerPedId()
                 local playerCoords = GetEntityCoords(playerPed)
                 for k,v in pairs(shells) do
                     local dist = Vdist(playerCoords, v.coords.x, v.coords.y, v.coords.z)
@@ -230,8 +237,8 @@ Citizen.CreateThread(function()
                 if next(drawShells) ~= nil and closestShell ~= nil then
                     if closestInspectShell == closestShell then
                         if IsControlJustReleased(0, 38) then
-                            local playerPed = GetPlayerPed(-1)
-                            SetCurrentPedWeapon(playerPed, 0xA2719263, true)
+                            local playerPed = PlayerPedId()
+                            --SetCurrentPedWeapon(playerPed, 0xA2719263, true)
                             while IsPedArmed(playerPed, 7) do
                                 Citizen.Wait(100)
                             end
@@ -240,22 +247,27 @@ Citizen.CreateThread(function()
                             ClearPedTasks(playerPed)
                             local time = round(shells[closestShell].time / 60, 1)
                             local weaponLabel = ESX.GetWeaponLabel(shells[closestShell].weapon)
-                            --ESX.ShowNotification(_U('shell_from', weaponLabel))
-                            exports['mythic_notify']:DoCustomHudText('inform', _U('shell_from', weaponLabel), 20000)
-                            TriggerServerEvent("esx_tk_bulletshells:removeShell", closestShell)
+                            exports.mythic_notify:DoLongHudText('inform', _U('shell_from', weaponLabel), 20000)
+                            if Config.ox_inventory then
+                                TriggerServerEvent("esx_tk_bulletshells:removeShell", closestShell)
+                                local id = 'a3' ..math.random(150000)
+                                local playerCoords = GetEntityCoords(PlayerPedId())
+                                local coords = GetStreetNameFromHashKey(GetStreetNameAtCoord(playerCoords.x, playerCoords.y, playerCoords.z))
+                                local data = 'Shell fired from a ' .. weaponLabel .. ' Casing number: ' .. id .. " Located near " .. coords 
+                                TriggerServerEvent('esx_tk_bulletshells:GiveEvidence', data)
+                            end
                             shells[closestShell] = nil
                             drawShells[closestShell] = nil
                             closestShell = nil
                             shouldUpdate = true
                             Citizen.Wait(3000)
-                            --ESX.ShowNotification(_U('was_shot', time))
-                            exports['mythic_notify']:DoCustomHudText('inform', _U('was_shot', time), 20000)
+                            exports.mythic_notify:DoLongHudText('inform', _U('was_shot', time), 20000)
                         end
                     end
                 end
             end
         else
-            Citizen.Wait(1000)
+            Citizen.Wait(5000)
         end
     end
 end)
@@ -270,8 +282,8 @@ Citizen.CreateThread(function()
             if isFlashlight and isAiming then
                 if next(drawShells) ~= nil and closestShell ~= nil then
                     if shells[closestShell] ~= nil then
-                        local playerCoords = GetEntityCoords(GetPlayerPed(-1))
-                        local distToClosest = Vdist(playerCoords, shells[closestShell].coords.x, shells[closestShell].coords.y, shells[closestShell].coords.z)
+                        local playerCoords = GetEntityCoords(PlayerPedId())
+                        local distToClosest = #(playerCoords - vector3(shells[closestShell].coords.x, shells[closestShell].coords.y, shells[closestShell].coords.z))
                         if distToClosest <= Config.InspectDistance then
                             closestInspectShell = closestShell
                         else
@@ -308,7 +320,7 @@ end)
 Citizen.CreateThread(function()
     while true do
         Citizen.Wait(250)
-        local playerPed = GetPlayerPed(-1)
+        local playerPed = PlayerPedId()
         local playerCoords = GetEntityCoords(playerPed)
         if IsPedArmed(playerPed, 4) then
             isArmed = true
@@ -325,7 +337,7 @@ Citizen.CreateThread(function()
     while true do
         if ESX.PlayerData.job.name == Config.DBPoliceName then
             Citizen.Wait(200)
-            local playerPed = GetPlayerPed(-1)
+            local playerPed = PlayerPedId()
             if GetSelectedPedWeapon(playerPed) == GetHashKey(Config.WeaponToSearch) then
                 isFlashlight = true
                 local playerId = PlayerId()
