@@ -6,7 +6,9 @@ description 'ESX Bullet Shells'
 
 author 'TuKeh_'
 
-version '1.0.0'
+version '1.0.1'
+
+shared_script '@es_extended/imports.lua'
 
 client_scripts {
     '@es_extended/locale.lua',
@@ -17,11 +19,7 @@ client_scripts {
 } 
 
 server_scripts {
-	'@mysql-async/lib/MySQL.lua',
+	'@oxmysql/lib/MySQL.lua',
     'config.lua',
     'server/main.lua',
-}
-
-dependencies {
-    'es_extended'
 }
